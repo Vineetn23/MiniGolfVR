@@ -1,21 +1,20 @@
+using System;
 using UnityEngine;
 
-public class Ball : MonoBehaviour
+public class Ball : BaseBall
 {
-    private Rigidbody rb;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        rb = GetComponent<Rigidbody>();
-    }
+    public static event Action BallHitGround;
 
     void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
-            GameManager.Instance.ResetBallAndScore();
+            OnHitGround();
         }
     }
 
+    public override void OnHitGround()
+    {
+        BallHitGround?.Invoke();
+    }
 }

@@ -1,9 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class Hole : MonoBehaviour
 {
+    public static event Action HoleReached;
 
     [SerializeField] private string targetTag = "Ball";
 
@@ -11,7 +11,7 @@ public class Hole : MonoBehaviour
     {
         if (other.CompareTag(targetTag))
         {
-            GameManager.Instance.GoToNextHole();
+            HoleReached?.Invoke();
         }
     }
 }

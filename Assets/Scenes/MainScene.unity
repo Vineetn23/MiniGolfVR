@@ -1092,8 +1092,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   forceMultiplier: 1.2
-  hitSound: {fileID: 2081552155}
-  rightHandController: {fileID: 2115540602}
   targetTag: Ball
 --- !u!4 &465401913 stripped
 Transform:
@@ -2715,6 +2713,7 @@ MonoBehaviour:
   - {fileID: 958170832}
   - {fileID: 1266223627}
   - {fileID: 328481655}
+  gameDataSO: {fileID: 0}
 --- !u!4 &814214302
 Transform:
   m_ObjectHideFlags: 0
@@ -3406,6 +3405,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 489826173}
+  startPos: {x: -4.3, y: 0, z: -3.5}
+  startRot: {x: 0, y: 0.70710677, z: 0, w: 0.70710677}
 --- !u!4 &886138260
 Transform:
   m_ObjectHideFlags: 0
@@ -5099,11 +5100,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1236108725}
   m_CullTransparentMesh: 1
---- !u!54 &1238587691 stripped
-Rigidbody:
-  m_CorrespondingSourceObject: {fileID: 6144529827923279398, guid: 0593ab3b2b722354d8967e950cd02c4f, type: 3}
-  m_PrefabInstance: {fileID: 6144529826712381197}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1238587696
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5165,8 +5161,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279d6fc5aa59cc8428b4b9089ce99b5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentHoleNumber: 0
-  player: {fileID: 489826173}
   startingPositions:
   - {fileID: 1963520838}
   - {fileID: 676058115}
@@ -5174,10 +5168,8 @@ MonoBehaviour:
   - {fileID: 612113733}
   - {fileID: 276413667}
   - {fileID: 1887482187}
-  ballRb: {fileID: 1238587691}
   scoreboardCanvas: {fileID: 2101636035}
-  ballGameObject: {fileID: 363246438}
-  currentHitNumber: 0
+  gameDataSO: {fileID: 0}
 --- !u!1 &1266223625
 GameObject:
   m_ObjectHideFlags: 0

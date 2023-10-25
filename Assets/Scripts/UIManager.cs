@@ -1,30 +1,17 @@
 using UnityEngine;
 using TMPro;
 
-public class UIManager : SingletonBehaviour<UIManager>
+public class UIManager : MonoBehaviour
 {
-    public TextMeshProUGUI[] currentScoreText;
-    public TextMeshProUGUI[] highScoreText;
-    public TextMeshProUGUI[] trackText;
+    [SerializeField] private TextMeshProUGUI[] currentScoreText;
+    [SerializeField] private TextMeshProUGUI[] highScoreText;
+    [SerializeField] private TextMeshProUGUI[] trackText;
 
-    protected override void Awake()
+    [SerializeField] public GameDataSO gameDataSO;
+
+    private void OnEnable()
     {
-        base.Awake();
-
-        GameManager.Instance.OnScoreUpdate += UpdateCurrentScoreDisplay;
-        GameManager.Instance.OnHighScoreUpdate += UpdateHighScoreDisplay;
-        GameManager.Instance.OnTrackStrike += StrikeTrackText;
-    }
-
-    protected override void OnDestroy()
-    {
-        if (GameManager.Instance != null) 
-        {
-            GameManager.Instance.OnScoreUpdate -= UpdateCurrentScoreDisplay;
-            GameManager.Instance.OnHighScoreUpdate -= UpdateHighScoreDisplay;
-            GameManager.Instance.OnTrackStrike -= StrikeTrackText;
-        }
-        base.OnDestroy();
+        SubscribeToEvents();
     }
 
     private void Start()
@@ -32,41 +19,79 @@ public class UIManager : SingletonBehaviour<UIManager>
         HighScoreDisplay();
     }
 
+    private void OnDisable()
+    {
+        UnsubscribeFromEvents();
+    }
+
+    private void SubscribeToEvents()
+    {
+        GameManager.GameStarted += OnGameStarted;
+        GameManager.TrackCompleted += OnTrackCompleted;
+        ScoreManager.ScoreUpdated += OnScoreUpdated;
+        ScoreManager.HighScoreUpdated += OnHighScoreUpdated;
+    }
+
+    private void UnsubscribeFromEvents()
+    {
+        GameManager.GameStarted -= OnGameStarted;
+        GameManager.TrackCompleted -= OnTrackCompleted;
+        ScoreManager.ScoreUpdated -= OnScoreUpdated;
+        ScoreManager.HighScoreUpdated -= OnHighScoreUpdated;
+    }
+
+    private void OnGameStarted()
+    {
+        ResetCurrentScores();
+    }
+
+    private void OnScoreUpdated(int score)
+    {
+        UpdateCurrentScoreDisplay(score);
+    }
+
+    private void OnHighScoreUpdated(int level, int newHighScore)
+    {
+        UpdateHighScoreDisplay(level, newHighScore);
+    }
+
+    private void OnTrackCompleted()
+    {
+        StrikeTrackText(gameDataSO.currentHoleNumber);
+    }
+
     public void HighScoreDisplay()
     {
         for (int i = 0; i < highScoreText.Length; i++)
         {
-            int highScore = GameManager.Instance.GetHighScoreForLevel(i);
-
-            if (highScore == int.MaxValue)
-            {
-                highScoreText[i].text = "0";
-            }
-            else
-            {
-                highScoreText[i].text = highScore.ToString();
-            }
+            highScoreText[i].text = (gameDataSO.highScores[i] == int.MaxValue) ? "" : gameDataSO.highScores[i].ToString();
         }
     }
 
-    private void UpdateCurrentScoreDisplay(int score)
+    public void UpdateCurrentScoreDisplay(int score)
     {
-        currentScoreText[GameManager.Instance.currentHoleNumber].text = score.ToString();
+        if (gameDataSO.currentHoleNumber >= 0 && gameDataSO.currentHoleNumber < currentScoreText.Length)
+        {
+            currentScoreText[gameDataSO.currentHoleNumber].text = score.ToString();
+        }
+        else
+        {
+            Debug.LogError($"Invalid hole number: {gameDataSO.currentHoleNumber}");
+        }
     }
 
-    private void UpdateHighScoreDisplay(int holeNumber, int newHighScore)
+    public void UpdateHighScoreDisplay(int level, int newHighScore)
     {
-        highScoreText[holeNumber].text = newHighScore.ToString();
+        highScoreText[level].text = (newHighScore == int.MaxValue) ? "" : newHighScore.ToString();
     }
 
-    private void StrikeTrackText(int currentTrack)
+    public void StrikeTrackText(int currentTrack)
     {
         trackText[currentTrack].text = $"<s>Track {currentTrack + 1}</s>";
     }
 
     public void ResetCurrentScores()
     {
-        // Loop through all currentScoreText elements and set their text to an empty string
         foreach (var scoreText in currentScoreText)
         {
             scoreText.text = "";
